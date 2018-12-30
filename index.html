@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>测试色弱敏感</title>
+    <link rel="stylesheet" href="./base.css">
+</head>
+<style>
+    body {
+        background-color: rgb(240,96,96);
+    }
+    #room {
+        width: 500px;
+        height: 500px;
+        position: relative;
+        margin:100px auto;
+    }
+    #box {
+        background-color: #ddd;
+        position: absolute;
+        border-radius: 10px;
+        padding: 10px;
+    }
+    #box span{
+        display: block;
+        float: left;
+        border-radius: 10px;
+        cursor: pointer;
+        border: 5px solid #ddd;
+        box-sizing: border-box;
+
+    }
+    .page {
+        width: 500px;
+        text-align: center;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+    .page h1 {
+        line-height: 140px;
+        font-size: 34px;
+        font-weight: bolder;
+        color: #FFFFFF;
+    }
+    #help {
+        color: #EEE;
+        font-size: 20px;
+        line-height: 40px;
+    }
+    .btn {
+        width: 200px;
+        height: 70px;
+        font-size: 20px;
+        color: #FFFFFF;
+        line-height: 50px;
+        border-radius: 10px;
+        background-color: orange;
+        margin-top: 80px;
+    }
+    #num {
+        font-size: 24px;
+        position: absolute;
+        top: 50px;
+        left: 50px;
+    }
+    #num .button {
+        width: 100px;
+        height: 50px;
+        text-align: center;
+        line-height: 50px;
+        background-color: #e1e1e1;
+        position: absolute;
+        border-radius: 15px;
+    }
+    #num #time {
+        top: 250px;
+        left: 0;
+    }
+    #num #pause {
+        background-color: orange;
+        color: #FFFFFF;
+        border: 2px solid #ccc;
+        border-radius: 10px;
+        cursor: pointer;
+        top: 450px;
+        left: 0;
+    }
+    #nikename {
+        font-size: 35px;
+        color: red;
+        line-height: 60px;
+    }
+</style>
+<body>
+<div id="room" style="display: block;">
+    <div class="page" id="index" style="display: block;z-index: 1;">
+        <h1>测试色弱敏感</h1>
+        <br>
+        <div id="help">
+            找出所有色塊里顏色不同的一個
+            <br>
+            Click on the tile that has a different color</div>
+        <div >
+            <button  class="btn" id="play">
+                PLAY
+            </button>
+        </div>
+    </div>
+    <div id="box"  class="lv1" style="width: 500px; height: 500px;display: none">
+    </div>
+    <div id="out" class="page" style="display: none">
+        <h2 id="points"></h2>
+        <br>
+        <h1>恭喜你获得称号</h1>
+        <br>
+        <h2 id="nikename"></h2>
+        <div>
+            <button  class="btn" id="toOut">
+                restart
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="num" style="display: none">得分:
+    <span id="grade">0</span>
+    <span id="time" class="button">60</span>
+    <span id="pause" class="button">暂停</span>
+</div>
+<script src="leverNum.js"></script>
+<script>
+var play = document.getElementById('play');//开始按钮,
+var index = document.getElementById('index');//开幕div
+var out = document.getElementById('out');//闭幕div
+var points = document.getElementById('points');//总分
+var nikename = document.getElementById('nikename');//称号
+var pause = document.getElementById('pause');//暂停
+var box = document.getElementById('box');//游戏div
+var num  = document.getElementById('num');//游戏计分
+var grade  = document.getElementById('grade');//关卡
+var time = document.getElementById('time');//倒计时
+// 隐藏开幕div,
+play.addEventListener("click", function (  ) {
+    index.style.display = 'none';
+    // 显示游戏div,
+    box.style.display = 'block';
+    num.style.display = 'block';
+    start ()
+},false);
+play.addEventListener("click", toGrade(  ),false);
+out.onclick = function (  ) {
+    out.style.display = 'none';
+    box.style.display = 'block';
+    num.style.display = 'block';
+    toGrade(  );
+    start(59);
+}
+pause.onclick = function(){//点击暂停
+    stop();
+}
+function stop (  ) {
+    clearInterval(timeID);//清除定时器
+    box.style.display = 'none';//隐藏游戏
+    clearAll();//清理span
+    pause.innerText = '开始';//修改按钮文本
+    repause();
+}
+function repause (  ) {
+    pause.onclick = function (  ) {
+        box.style.display = 'block';
+        pause.innerText = '暂停';
+        clearAll();
+        toGrade();
+        start(parseInt(time.innerText));
+        pause.onclick = function(){
+            stop();
+        }
+    }
+
+}
+    // 开始计时器,
+        //解析关卡
+        //随机生成1~grid*2之间的数current
+        //生成0~255-aberr之间的数,生成3组,拼接颜色,
+        //记录下来,循环生成2*2个方块
+        //方块宽高由100%/grid
+        //属性赋值
+        //判断当前循环的i是否等于current
+                //是就把当前颜色每组加aberr
+                    //并且添加单击事件
+                    //点击开始下一轮循环关卡加一,分数加一,
+                //否就赋值颜色
+    //到时间,显示分数,关卡
+        //判断分数,分类显示称号
+        //显示闭幕,重新开始按钮,刷新网页或者重新初始化
+function start ( i = 59 ) {
+    timeID = setInterval(function (  ) {
+        time.innerText = i--;
+        if ( i <= 0 ){
+            clearInterval(timeID);
+            clearAll();
+            box.style.display = 'none';
+            num.style.display = 'none';
+            out.style.display = 'block';
+            points.innerText = '你的分数: '+grade.innerText;
+            nikename.innerText = nike();
+            grade.innerText = 0;
+        }
+    },1000)
+
+
+}
+
+
+//解析关卡
+function toGrade (  ) {
+    //随机生成1~grid*2之间的数current
+    // clearAll();//清除
+    // console.log((Math.random()*Math.pow(lever[+grade.innerText].grid,2)));
+    var num = lever[+grade.innerText].grid;//当前关卡一行span的个数
+    var nums = Math.pow(num,2);//获取关卡需要的span个数
+    var current = Math.floor(Math.random()*nums);//随机标记
+    var n = randomColor(lever[+grade.innerText].aberr);//生成颜色数值
+    //获取关卡信息{lv:'lv2',aberr:105,grid:2}#FFFFFF
+    for(var i = 0; i < nums ; i++) {
+        var span = document.createElement('span');
+        span.style.width = 100/num+'%';//百分比宽度
+        span.style.height = 100/num+'%';//百分比高度
+        span.num = i;
+        if( i == current){//判断是否是标记span
+            span.style.backgroundColor = 'rgb('+n[1][0]+','+n[1][1]+','+n[1][2]+')';
+        }else{//设置标记不同的颜色
+            span.style.backgroundColor =  'rgb('+n[0][0]+','+n[0][1]+','+n[0][2]+')';
+        }
+        box.appendChild(span);
+    }
+    box.addEventListener("click", function ( e ) {
+        e = e || window.event;
+        if ( e.target.num == current ){
+            //标记span被单击，分数加一
+            grade.innerText = parseInt(grade.innerText)+1;
+            //清除第一关span标签
+            clearAll( );
+            //清除第一关标记
+            current = null;
+            //进入第二关
+            toGrade( );
+        }
+        e.stopPropagation();
+    },false);
+}
+//生成颜色函数
+function randomColor(endColor) {
+    var n = [[],[]]; //定义箩筐
+    for (var i = 0; i < 3; i++) { //3个指定范围数值
+        n[0][i] = Math.floor(Math.random() * (255 - endColor));
+        n[1][i] = (n[0][i] + endColor);
+        // n[0][i] = n[0][i].toString(16);
+        // n[1][i] = n[1][i].toString(16);
+    }
+    return n;
+}
+
+//清除span
+function clearAll (  ) {
+    var num = box.children.length;
+    for(var i = 0; i < num; i++) {
+      box.removeChild(box.children[num-i-1]);
+    }
+}
+
+//生成称号
+function nike (  ) {
+    var n = '';
+    switch ( Math.ceil(parseInt(grade.innerText)/5) ) {
+        case 1:
+            n = '死鱼眼  `坂田银时`'
+            break;
+        case 2:
+            n = '鹰眼  `米霍克`'
+            break;
+        case 3:
+            n = '白眼  `日向雏田`'
+            break;
+        case 4:
+            n = '写轮眼  `宇智波`'
+            break;
+        case 5:
+            n = '轮回眼  `佩恩长门`'
+            break;
+        case 6:
+            n = '钛合金  狗眼'
+            break;
+        default :
+            n = '六道轮回眼 `六道骸` '
+    }
+    return n;
+}
+</script>
+</body>
+</html>

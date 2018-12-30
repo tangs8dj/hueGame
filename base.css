@@ -1,0 +1,90 @@
+
+/* 初始化代码 */
+body,
+div,
+span,
+p,
+a,
+input,
+img,
+ul,
+li,
+i,
+strong,
+em,
+del,
+ins,
+h1,
+h2,
+h3,
+h4,
+h5 {
+    margin: 0;
+    padding: 0;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+}
+
+li {
+    list-style: none;
+}
+
+img {
+    vertical-align: middle;
+    /* 清除图片标签，默认下边线属性 */
+    border: none;
+    /* 低版本浏览器img标签会自带边框属性 */
+}
+input {
+    border: none;
+    outline: none;
+    /* 清除边框，自己书写 */
+    /* 清除选中时边框高亮效果，自己书写 */
+}
+
+h1,
+h2,
+h3,
+h4 {
+    font-weight: normal;
+    /* 清除标题标签默认的加粗效果 */
+}
+
+i {
+    /* 很多时候都是用来存放一些小结构或者小功能 */
+    font-style: normal;
+    /* 将 i 标签的倾斜效果清除 */
+}
+
+body {
+    font: 12px/100% "微软雅黑";
+    background-color: #fff;
+    /* 设置文本字体12px，行高100%，字体微软雅黑 */
+}
+
+.w {
+    width: 850px;
+    margin: 0 auto;
+    /* 需要版心的盒子继承这个类 */
+    /* 版心就是页面的中间区域 */
+    /* 水平居中 */
+    /* 宽度相同 */
+}
+/* 单独抽取相同属性，组合成一个类选择器，哪一个盒子需要版心居中，就继承这个类选择器 */
+
+.clearfix::after {
+    content: ".";
+    clear: both;
+    display: block;
+    height: 0;
+    visibility: hidden;
+}
+/* 清除浮动，需要继承 */
+
+.clearfix {
+    *zoom: 1;
+}
+/* 兼容ie版本 */
